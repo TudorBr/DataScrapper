@@ -1,4 +1,4 @@
-package com.company.data.DataScrapper;
+package com.company.data.scrapper;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

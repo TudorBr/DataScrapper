@@ -1,0 +1,62 @@
+package com.company.data.scrapper.service;
+
+import com.company.data.scrapper.repository.DataScrapperRepository;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+
+@Service
+public class DataScrapperService {
+    private final DataScrapperRepository dataScrapperRepository;
+    private final Queue<Document> docs = new ConcurrentLinkedQueue();
+    private final Logger logger = LoggerFactory.getLogger(DataScrapperService.class);
+
+    public DataScrapperService(DataScrapperRepository dataScrapperRepository) {
+        this.dataScrapperRepository = dataScrapperRepository;
+    }
+
+    public void extractData(String domanin) {
+
+        try {
+            Document doc = Jsoup.connect("https://www." + domanin)
+                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
+                    .header("Accept-Language", "*")
+                    .get();
+
+//            Document doc = Jsoup.connect("https://www.bostonzen.org ")
+//                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
+//                    .header("Accept-Language", "*")
+//                    .get();
+
+//           doc.stream().forEach(System.out::println);
+            docs.add(doc);
+
+            try{
+
+            }catch (Exception e) {
+                logger.error(e.getMessage());
+            }
+            logger.info("Current added websites: " + docs.size());
+
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+
+    }
+
+
+
+
+//    @PostConstruct
+//    public void init(){
+//        extractData("test");
+//    }
+
+}

@@ -1,4 +1,4 @@
-package com.company.data.DataScrapper;
+package com.company.data.scrapper;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
