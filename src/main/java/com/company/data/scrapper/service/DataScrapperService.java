@@ -1,5 +1,6 @@
 package com.company.data.scrapper.service;
 
+import com.company.data.scrapper.analytics.ErrorTracker;
 import com.company.data.scrapper.repository.DataScrapperRepository;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -15,11 +16,17 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @Service
 public class DataScrapperService {
     private final DataScrapperRepository dataScrapperRepository;
+    private final ErrorTracker errorTracker;
     private final Queue<Document> docs = new ConcurrentLinkedQueue();
     private final Logger logger = LoggerFactory.getLogger(DataScrapperService.class);
 
-    public DataScrapperService(DataScrapperRepository dataScrapperRepository) {
+
+
+
+
+    public DataScrapperService(DataScrapperRepository dataScrapperRepository, ErrorTracker errorTracker) {
         this.dataScrapperRepository = dataScrapperRepository;
+        this.errorTracker = errorTracker;
     }
 
     public void extractData(String domanin) {
@@ -27,10 +34,10 @@ public class DataScrapperService {
         try {
             Document doc = Jsoup.connect("https://www." + domanin)
                     .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
-                    .header("Accept-Language", "*")
+                    .header("Accept-Language", "en-US,en;q=0.9")
                     .get();
 
-//            Document doc = Jsoup.connect("https://www.bostonzen.org ")
+//            Document doc = Jsoup.connect("https://www.timent.com ")
 //                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
 //                    .header("Accept-Language", "*")
 //                    .get();
@@ -42,21 +49,16 @@ public class DataScrapperService {
 
             }catch (Exception e) {
                 logger.error(e.getMessage());
+                errorTracker.logError(e.getMessage());
             }
-            logger.info("Current added websites: " + docs.size());
-
         } catch (IOException e) {
             logger.error(e.getMessage());
+            errorTracker.logError(e.getMessage());
         }
-
     }
 
 
-
-
-//    @PostConstruct
-//    public void init(){
-//        extractData("test");
-//    }
-
+    public Queue<Document> getDocs() {
+        return docs;
+    }
 }

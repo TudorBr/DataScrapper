@@ -23,7 +23,6 @@ public class CsvService {
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
-        logger.info("csvRecords size: " + csvRecords.size());
     }
 
     public List<String> getCsvRecords() {
