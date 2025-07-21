@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Service
 public class DataScrapperService {
-    private final DataScrapperRepository dataScrapperRepository;
+
     private final ErrorTracker errorTracker;
     private final Queue<Document> docs = new ConcurrentLinkedQueue();
     private final Logger logger = LoggerFactory.getLogger(DataScrapperService.class);
@@ -24,8 +24,7 @@ public class DataScrapperService {
 
 
 
-    public DataScrapperService(DataScrapperRepository dataScrapperRepository, ErrorTracker errorTracker) {
-        this.dataScrapperRepository = dataScrapperRepository;
+    public DataScrapperService(ErrorTracker errorTracker) {
         this.errorTracker = errorTracker;
     }
 
@@ -35,20 +34,14 @@ public class DataScrapperService {
             Document doc = Jsoup.connect("https://www." + domanin)
                     .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
                     .header("Accept-Language", "en-US,en;q=0.9")
+                    .timeout(5000)
                     .get();
-
-//            Document doc = Jsoup.connect("https://www.timent.com ")
-//                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
-//                    .header("Accept-Language", "*")
-//                    .get();
-
-//           doc.stream().forEach(System.out::println);
             docs.add(doc);
 
             try{
 
             }catch (Exception e) {
-                logger.error(e.getMessage());
+               logger.error(e.getMessage());
                 errorTracker.logError(e.getMessage());
             }
         } catch (IOException e) {

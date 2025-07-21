@@ -5,7 +5,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,9 +16,14 @@ import java.util.List;
 public class CsvService {
     private final List<String> csvRecords = new ArrayList<>();
     private static final Logger logger = LoggerFactory.getLogger(CsvService.class);
+public static final String CSV_FILE_PATH = CsvService.class.getResource("/CSV/sample-websites.csv").toString();
 
-    public void readCsvRecords() {
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/CSV/sample-websites.csv")))) {
+    public void readCsvRecords(String csvPath) {
+        try (BufferedReader br = new BufferedReader(
+                new InputStreamReader(
+                        new URL(csvPath).openStream()
+                )
+        )) {
             String entry;
             while ((entry = br.readLine()) != null) {
                 csvRecords.add(entry);
@@ -26,7 +34,6 @@ public class CsvService {
     }
 
     public List<String> getCsvRecords() {
-        logger.info("returneaza records");
         return csvRecords;
     }
 }

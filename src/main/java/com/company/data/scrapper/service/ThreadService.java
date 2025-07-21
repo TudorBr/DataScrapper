@@ -1,5 +1,6 @@
 package com.company.data.scrapper.service;
 
+import com.company.data.scrapper.model.CompanyDTO;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,11 +14,13 @@ public class ThreadService {
 
     private final DataScrapperService dataScrapperService;
     private final DocumentService documentService;
+    private final CompanyService companyService;
     private static final Logger logger = LoggerFactory.getLogger(ThreadService.class);
 
-    public ThreadService(DataScrapperService dataScrapperService, DocumentService documentService) {
+    public ThreadService(DataScrapperService dataScrapperService, DocumentService documentService, CompanyService companyService) {
         this.dataScrapperService = dataScrapperService;
         this.documentService = documentService;
+        this.companyService = companyService;
     }
 
 
@@ -42,7 +45,10 @@ public class ThreadService {
         Future<?> future = executor.submit(() -> {
             Document doc;
             while ((doc = dataScrapperService.getDocs().poll()) != null) {
-                documentService.searchDocument(doc);
+                CompanyDTO companyDTO = documentService.searchDocument(doc);
+                if (companyDTO != null && !companyDTO.isEmpty()) {
+                    companyService.addNewCompanyData(companyDTO);
+                }
             }
         });
             future.get();

@@ -24,16 +24,17 @@ public class DataScrapperController {
     }
 
     private void startScrappingOperation() {
-        csvService.readCsvRecords();
+        csvService.readCsvRecords(CsvService.CSV_FILE_PATH);
         threadService.prepareForExtract(csvService.getCsvRecords());
         threadService.searchForPatterns();
-        errorTracker.printErrorCounts();
+     //   errorTracker.printErrorCounts();
 
     }
 
 
     @PostConstruct
     void init() {
+
         startScrappingOperation();
     }
 }
